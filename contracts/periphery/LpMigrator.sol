@@ -35,6 +35,7 @@ contract LpMigrator is ILpMigrator, ERC721Holder {
         fromNFT.decreaseLiquidity(
             INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: fromParams.tokenId,
+                userOwner: msg.sender,
                 liquidity: liquidity,
                 amount0Min: fromParams.amount0Min,
                 amount1Min: fromParams.amount1Min,

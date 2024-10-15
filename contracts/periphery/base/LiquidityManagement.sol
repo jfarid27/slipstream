@@ -34,6 +34,7 @@ abstract contract LiquidityManagement is ICLMintCallback, PeripheryImmutableStat
         address poolAddress;
         PoolAddress.PoolKey poolKey;
         address recipient;
+        address userOwner;
         int24 tickLower;
         int24 tickUpper;
         uint256 amount0Desired;
@@ -62,6 +63,7 @@ abstract contract LiquidityManagement is ICLMintCallback, PeripheryImmutableStat
 
         (amount0, amount1) = pool.mint(
             params.recipient,
+            params.userOwner,
             params.tickLower,
             params.tickUpper,
             liquidity,

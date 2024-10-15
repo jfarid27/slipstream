@@ -13,6 +13,7 @@ interface ICLPoolEvents {
     /// @notice Emitted when liquidity is minted for a given position
     /// @param sender The address that minted the liquidity
     /// @param owner The owner of the position and recipient of any minted liquidity
+    /// @param userOwner The user owner of the position
     /// @param tickLower The lower tick of the position
     /// @param tickUpper The upper tick of the position
     /// @param amount The amount of liquidity minted to the position range
@@ -21,6 +22,7 @@ interface ICLPoolEvents {
     event Mint(
         address sender,
         address indexed owner,
+        address userOwner,
         int24 indexed tickLower,
         int24 indexed tickUpper,
         uint128 amount,
