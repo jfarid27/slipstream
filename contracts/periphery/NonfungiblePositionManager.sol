@@ -165,6 +165,7 @@ contract NonfungiblePositionManager is
                 poolAddress: address(pool),
                 poolKey: poolKey,
                 recipient: address(this),
+                userOwner: params.recipient,
                 tickLower: params.tickLower,
                 tickUpper: params.tickUpper,
                 amount0Desired: params.amount0Desired,
@@ -197,7 +198,7 @@ contract NonfungiblePositionManager is
 
         refundETH();
 
-        emit IncreaseLiquidity(tokenId, liquidity, amount0, amount1);
+        emit IncreaseLiquidity(tokenId, params.recipient, liquidity, amount0, amount1);
     }
 
     modifier isAuthorizedForToken(uint256 tokenId) {
@@ -235,6 +236,7 @@ contract NonfungiblePositionManager is
             AddLiquidityParams({
                 poolAddress: address(pool),
                 poolKey: poolKey,
+                userOwner: params.userOwner,
                 tickLower: position.tickLower,
                 tickUpper: position.tickUpper,
                 amount0Desired: params.amount0Desired,
@@ -271,7 +273,7 @@ contract NonfungiblePositionManager is
         refundETH();
 
         emit MetadataUpdate(params.tokenId);
-        emit IncreaseLiquidity(params.tokenId, liquidity, amount0, amount1);
+        emit IncreaseLiquidity(params.tokenId, params.userOwner, liquidity, amount0, amount1);
     }
 
     /// @inheritdoc INonfungiblePositionManager
@@ -332,7 +334,7 @@ contract NonfungiblePositionManager is
         position.liquidity = positionLiquidity - params.liquidity;
 
         emit MetadataUpdate(params.tokenId);
-        emit DecreaseLiquidity(params.tokenId, params.liquidity, amount0, amount1);
+        emit DecreaseLiquidity(params.tokenId, params.userOwner, params.liquidity, amount0, amount1);
     }
 
     /// @inheritdoc INonfungiblePositionManager

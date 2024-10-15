@@ -22,7 +22,7 @@ contract TestCLReentrantCallee is ICLSwapCallback {
         }
 
         // try to reenter mint
-        try ICLPool(msg.sender).mint(address(0), 0, 0, 0, new bytes(0)) {}
+        try ICLPool(msg.sender).mint(address(0), address(0), 0, 0, 0, new bytes(0)) {}
         catch Error(string memory reason) {
             require(keccak256(abi.encode(reason)) == keccak256(abi.encode(expectedReason)));
         }

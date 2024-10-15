@@ -317,6 +317,19 @@ contract CLPool is ICLPool {
         int128 liquidityDelta;
     }
 
+    struct MintParams {
+        address sender;
+        address recipient;
+        address userOwner;
+        int24 tickLower;
+        int24 tickUpper;
+        uint128 amount;
+        uint256 amount0;
+        uint256 amount1;
+        bytes data;
+    }
+
+
     /// @dev Effect some changes to a position
     /// @param params the position details and the change to the position's liquidity to effect
     /// @return position a storage pointer referencing the position with the given owner and tick range
@@ -452,34 +465,34 @@ contract CLPool is ICLPool {
     }
 
     /// @inheritdoc ICLPoolActions
-    function mint(address recipient, int24 tickLower, int24 tickUpper, uint128 amount, bytes calldata data)
+    function mint(MintParams memory params)
         external
         override
         lock
         returns (uint256 amount0, uint256 amount1)
     {
-        require(amount > 0);
+        require(params.amount > 0);
         (, int256 amount0Int, int256 amount1Int) = _modifyPosition(
             ModifyPositionParams({
-                owner: recipient,
-                tickLower: tickLower,
-                tickUpper: tickUpper,
-                liquidityDelta: int256(amount).toInt128()
+                owner: params.recipient,
+                tickLower: params.tickLower,
+                tickUpper: params.tickUpper,
+                liquidityDelta: int256(params.amount).toInt128()
             })
         );
 
-        amount0 = uint256(amount0Int);
-        amount1 = uint256(amount1Int);
+        amount0 = uint256(params.amount0);
+        amount1 = uint256(params.amount1);
 
         uint256 balance0Before;
         uint256 balance1Before;
         if (amount0 > 0) balance0Before = balance0();
         if (amount1 > 0) balance1Before = balance1();
-        ICLMintCallback(msg.sender).uniswapV3MintCallback(amount0, amount1, data);
+        ICLMintCallback(msg.sender).uniswapV3MintCallback(amount0, amount1, params.data);
         if (amount0 > 0) require(balance0Before.add(amount0) <= balance0(), "M0");
         if (amount1 > 0) require(balance1Before.add(amount1) <= balance1(), "M1");
 
-        emit Mint(msg.sender, recipient, tickLower, tickUpper, amount, amount0, amount1);
+        emit Mint(params.sender, params.recipient, params.userOwner, params.tickLower, params.tickUpper, params.amount, amount0, amount1);
     }
 
     /// @inheritdoc ICLPoolActions
